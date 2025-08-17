@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Конфигурация типа уведомления -->
+<notification_type>
+  <id>learning_reminder</id>
+  <name>Напоминание о незавершенном обучении</name>
+  <description>Уведомления сотрудникам о необходимости завершить назначенные курсы и тесты</description>
+  
+  <!-- Настройки уведомления -->
+  <category>education</category>
+  <priority>normal</priority>
+  <delivery_method>internal</delivery_method>
+  
+  <!-- Шаблон темы -->
+  <subject_template>Напоминание о незавершенном обучении</subject_template>
+  
+  <!-- Настройки отображения -->
+  <icon>education_reminder</icon>
+  <color>#FFA500</color>
+  
+  <!-- Права доступа -->
+  <sender_roles>
+    <role>system</role>
+    <role>hr_manager</role>
+    <role>learning_admin</role>
+  </sender_roles>
+  
+  <!-- Настройки доставки -->
+  <auto_delete_after_days>30</auto_delete_after_days>
+  <mark_as_read_after_action>true</mark_as_read_after_action>
+  
+  <!-- Статус -->
+  <enabled>true</enabled>
+  <created_date>2024-01-01</created_date>
+  <version>1.0</version>
+</notification_type>
