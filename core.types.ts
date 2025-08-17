@@ -41,6 +41,34 @@ export type GroupedItems = {
   };
 };
 
+// === Request/Response Types ===
+
+/**
+ * Типы для тела запроса
+ */
+export type RequestBody =
+  | { collaborator_id: string; course_id: string } // для assign_course
+  | Record<string, unknown> // для других случаев
+  | null;
+
+// === WebTutor Document Types ===
+
+/**
+ * Базовый интерфейс для документов WebTutor
+ */
+export interface WebTutorDocument {
+  id: number;
+  Save(): void;
+}
+
+/**
+ * Документ активного обучения
+ */
+export interface ActiveLearningDocument extends WebTutorDocument {
+  person_id: number;
+  course_id: number;
+}
+
 // === WebTutor Global Objects ===
 
 declare global {
@@ -49,7 +77,7 @@ declare global {
    */
   const CurRequest: {
     Query: { [key: string]: string };
-    Body: { [key: string]: any };
+    Body: RequestBody;
   };
 
   /**
@@ -67,7 +95,7 @@ declare global {
      * @param query - SQL запрос
      * @returns результат запроса
      */
-    xquery(query: string): any[];
+    xquery<T = unknown>(query: string): T[];
     /**
      * Создает новый документ с ключом
      * @param catalogName - название каталога
@@ -75,18 +103,12 @@ declare global {
      * @param useParentKey - использовать ключ родителя
      * @returns результат запроса
      */
-    new_doc_with_key(
+    new_doc_with_key<T extends WebTutorDocument = WebTutorDocument>(
       catalogName: string,
-      key: any,
+      key: string | number | null,
       useParentKey: boolean
     ): {
-      Doc: {
-        id: number;
-        person_id?: number;
-        course_id?: number;
-        test_id?: number;
-        Save(): void;
-      };
+      Doc: T;
     };
     /**
      * Создает уведомление
@@ -154,7 +176,7 @@ export function validateNumericId(id: string | undefined): number | null {
  * @param status - статус ответа
  * @param data - данные для отправки
  */
-export function sendJSON(status: number, data: any): void {
+export function sendJSON<T>(status: number, data: T): void {
   CurResponse.SetStatus(status);
   CurResponse.SetHeader("Content-Type", "application/json; charset=utf-8");
   CurResponse.SetBody(JSON.stringify(data, null, 2));
