@@ -11,6 +11,12 @@ import {
   ActiveLearningDocument,
 } from "./core.types";
 
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+const MIN_PAGE_SIZE = 1;
+const MIN_PAGE = 1;
+const ACTIVE_LEARNING_CATALOG = "active_learning";
+
 /**
  * Основная функция-контроллер для веб-шаблона.
  * Определяет действие и вызывает соответствующий обработчик.
@@ -48,10 +54,16 @@ function main(): void {
  * GET /?action=get_subordinates&fullname=Иванов&page=1&pageSize=20
  */
 function handleGetSubordinates(): void {
-  const page = Math.max(1, parseInt(CurRequest.Query.page, 10) || 1);
+  const page = Math.max(
+    MIN_PAGE,
+    parseInt(CurRequest.Query.page, 10) || MIN_PAGE
+  );
   const pageSize = Math.min(
-    100,
-    Math.max(1, parseInt(CurRequest.Query.pageSize, 10) || 20)
+    MAX_PAGE_SIZE,
+    Math.max(
+      MIN_PAGE_SIZE,
+      parseInt(CurRequest.Query.pageSize, 10) || DEFAULT_PAGE_SIZE
+    )
   );
   const offset = (page - 1) * pageSize;
   const fullnameSearch = CurRequest.Query.fullname || "";
@@ -64,7 +76,20 @@ function handleGetSubordinates(): void {
     return sendError(401, "Unauthorized: Invalid user context");
   }
 
-  const query = `
+  // Запрос для получения общего количества записей
+  const countQuery = `
+      SELECT COUNT(*) AS total_count
+      FROM
+        collaborators AS c
+      INNER JOIN
+        func_managers AS fm ON fm.manager_id = ${currentUserId}
+      WHERE
+        fm.person_id = c.id
+        AND c.fullname LIKE '${searchPattern}';
+    `;
+
+  // Запрос для получения данных с пагинацией
+  const dataQuery = `
       SELECT
         c.id AS id,
         c.fullname AS fullname,
@@ -84,8 +109,22 @@ function handleGetSubordinates(): void {
     `;
 
   try {
-    const result = tools.xquery<Collaborator>(query);
-    sendJSON(200, result);
+    const countResult = tools.xquery<{ total_count: number }>(countQuery);
+    const totalCount = ArrayOptFirstElem(countResult)?.total_count || 0;
+
+    const data = tools.xquery<Collaborator>(dataQuery);
+
+    const response = {
+      data: data,
+      pagination: {
+        page: page,
+        pageSize: pageSize,
+        totalCount: totalCount,
+        totalPages: Math.ceil(totalCount / pageSize),
+      },
+    };
+
+    sendJSON(200, response);
   } catch (e) {
     logWithPrefix(
       "GET_SUBORDINATES",
@@ -242,7 +281,7 @@ function handleAssignCourse(): void {
 
     // Создаем новое назначение через API WebTutor
     const newDoc = tools.new_doc_with_key<ActiveLearningDocument>(
-      "active_learning",
+      ACTIVE_LEARNING_CATALOG,
       null,
       false
     );
