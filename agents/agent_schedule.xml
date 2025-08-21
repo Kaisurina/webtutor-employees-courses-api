@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Конфигурация планировщика агента уведомлений -->
+<schedule>
+  <agent>
+    <id>learning_reminder_agent</id>
+    <name>Агент напоминаний о незавершенном обучении</name>
+    <description>Отправляет уведомления сотрудникам о незавершенных курсах и тестах</description>
+    
+    <!-- Расписание: каждый день в 8:00 утра -->
+    <schedule_type>daily</schedule_type>
+    <time>08:00</time>
+    <timezone>local</timezone>
+    
+    <!-- Путь к скрипту агента -->
+    <script_path>notification.agent.ts</script_path>
+    
+    <!-- Настройки выполнения -->
+    <max_execution_time>600</max_execution_time> <!-- 10 минут -->
+    <retry_count>3</retry_count>
+    <retry_interval>300</retry_interval> <!-- 5 минут -->
+    
+    <!-- Уведомления о статусе агента -->
+    <notify_on_error>true</notify_on_error>
+    <notify_on_success>false</notify_on_success>
+    <admin_email>admin@company.com</admin_email>
+    
+    <!-- Логирование -->
+    <log_level>info</log_level>
+    <log_retention_days>30</log_retention_days>
+    
+    <!-- Статус -->
+    <enabled>true</enabled>
+    <created_date>2024-01-01</created_date>
+    <author>system</author>
+  </agent>
+</schedule>

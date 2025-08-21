@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Шаблон уведомления о незавершенном обучении -->
+<notification_template>
+  <id>learning_reminder_template</id>
+  <name>Шаблон напоминания о незавершенном обучении</name>
+  <type>learning_reminder</type>
+  
+  <!-- Основной шаблон -->
+  <template>
+    <subject>Напоминание о незавершенном обучении</subject>
+    <body>
+      <![CDATA[
+      Уважаемый(ая) {FULLNAME}!
+
+      Напоминаем о необходимости завершить назначенное вам обучение.
+
+      {IF_COURSES}
+      Незавершенные курсы:
+      {COURSES_LIST}
+
+      {END_IF_COURSES}
+      {IF_TESTS}
+      Незавершенные тесты:
+      {TESTS_LIST}
+
+      {END_IF_TESTS}
+      Пожалуйста, найдите время для их прохождения в ближайшее время.
+
+      С уважением,
+      Система обучения
+      ]]>
+    </body>
+  </template>
+  
+  <!-- Переменные шаблона -->
+  <variables>
+    <variable>
+      <name>FULLNAME</name>
+      <description>Полное имя сотрудника</description>
+      <type>string</type>
+      <required>true</required>
+    </variable>
+    <variable>
+      <name>COURSES_LIST</name>
+      <description>Список незавершенных курсов</description>
+      <type>list</type>
+      <format>- {ITEM_NAME}</format>
+    </variable>
+    <variable>
+      <name>TESTS_LIST</name>
+      <description>Список незавершенных тестов</description>
+      <type>list</type>
+      <format>- {ITEM_NAME}</format>
+    </variable>
+  </variables>
+  
+  <!-- Настройки локализации -->
+  <localization>
+    <default_language>ru</default_language>
+    <supported_languages>
+      <language>ru</language>
+      <language>en</language>
+    </supported_languages>
+  </localization>
+  
+  <!-- Статус -->
+  <enabled>true</enabled>
+  <version>1.0</version>
+  <created_date>2024-01-01</created_date>
+</notification_template>
