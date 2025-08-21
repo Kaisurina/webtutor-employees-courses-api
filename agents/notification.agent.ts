@@ -1,4 +1,4 @@
-import { IncompleteItem, GroupedItems, logWithPrefix } from "./core.types";
+import { IncompleteItem, GroupedItems, logWithPrefix } from "../core.types";
 
 // Константы конфигурации
 const NOTIFICATION_SUBJECT = "Напоминание о незавершенном обучении";

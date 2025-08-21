@@ -9,7 +9,7 @@ import {
   sendError,
   logWithPrefix,
   ActiveLearningDocument,
-} from "./core.types";
+} from "../core.types";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
